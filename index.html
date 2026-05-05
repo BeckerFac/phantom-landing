@@ -34,6 +34,8 @@
     --text: #ffffff;
     --text-secondary: #9ca3af;
     --text-tertiary: #6b7280;
+    --neon-red: #dc2626;
+    --neon-red-bright: #ef4444;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -47,94 +49,70 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
   .cursor-inner { position: fixed; width: 4px; height: 4px; background: var(--neon-green-bright); border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); }
   .cursor-outer.hover { transform: translate(-50%, -50%) scale(2); border-color: var(--neon-purple-bright); }
 
-  /* ===== INTRO SPLASH ===== */
-  .hero-wrapper { position: relative; height: 250vh; }
-  .intro-sticky {
-    position: sticky; top: 0;
-    height: 100vh; width: 100%;
-    overflow: hidden;
-    background: radial-gradient(ellipse at center, #0d0820 0%, #0a0a0a 70%);
+  /* ===== VAULT GATE ===== */
+  .vault-gate {
+    position: fixed; inset: 0; z-index: 9998;
+    background: #000;
     display: flex; align-items: center; justify-content: center;
-    flex-direction: column;
+    overflow: hidden;
+    cursor: none;
+    will-change: opacity, clip-path;
   }
-  .intro-ambient {
-    position: absolute;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 80vh; height: 80vh;
-    background: radial-gradient(circle,
-      rgba(124, 58, 237, 0.18) 0%,
-      rgba(124, 58, 237, 0.06) 35%,
-      transparent 70%);
-    filter: blur(40px);
-    z-index: 1;
-    pointer-events: none;
+  .vault-gate canvas.crypto-bg { opacity: 0.45; }
+  .vault-content {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 28px; padding: 32px;
   }
-  .dissolve-stage {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(70vh, 80vw);
-    height: min(70vh, 80vw);
-    z-index: 5;
-    pointer-events: none;
+  .vault-lock {
+    width: 128px; height: 128px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center,
+      rgba(124,58,237,0.35) 0%,
+      rgba(124,58,237,0.12) 45%,
+      transparent 75%);
+    display: flex; align-items: center; justify-content: center;
+    animation: lockGlow 3s ease-in-out infinite;
+    will-change: transform, filter;
+  }
+  .vault-lock svg {
+    width: 72px; height: 72px;
+    stroke: #fff; stroke-width: 2.5; fill: none;
+    filter: drop-shadow(0 0 12px rgba(124,58,237,0.7));
+  }
+  .vault-shackle {
+    transform-origin: 50% 70%;
+    transform-box: fill-box;
+    will-change: transform;
+  }
+  @keyframes lockGlow {
+    0%, 100% { filter: drop-shadow(0 0 18px rgba(124,58,237,0.45)); }
+    50%      { filter: drop-shadow(0 0 32px rgba(124,58,237,0.85)); }
+  }
+  .vault-flash {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, rgba(147,51,234,0.95) 0%, rgba(124,58,237,0.4) 30%, transparent 65%);
+    opacity: 0; pointer-events: none;
+    z-index: 3;
     will-change: opacity;
   }
-  #dissolve-video {
-    width: 100%; height: 100%;
-    object-fit: contain;
-    mix-blend-mode: lighten;
-  }
-  .intro-labels {
-    position: absolute;
-    bottom: 60px; left: 50%;
-    transform: translateX(-50%);
-    text-align: center; z-index: 15;
-    will-change: opacity, transform;
-    display: flex; flex-direction: column; align-items: center; gap: 16px;
-  }
-  .crypto-pill {
-    display: inline-flex; align-items: stretch;
-    border: 1px solid var(--line-strong);
-    background: rgba(10,10,14,0.72);
-    border-radius: 6px;
-    overflow: hidden;
-    backdrop-filter: blur(12px);
+  .vault-cta-text {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
+    font-size: 13px; letter-spacing: 0.32em;
+    color: rgba(255,255,255,0.78);
+    text-transform: uppercase;
   }
-  .cp-key { padding: 8px 12px; color: var(--neon-purple-bright); border-right: 1px solid var(--line-strong); font-weight: 500; }
-  .cp-hash { padding: 8px 14px; color: var(--text-secondary); letter-spacing: 0.05em; font-feature-settings: "tnum"; }
-  .cp-status { padding: 8px 12px; background: rgba(16,185,129,0.1); color: var(--neon-green); border-left: 1px solid var(--line-strong); font-weight: 600; letter-spacing: 0.08em; }
-  .cp-status::before { content: '◆ '; margin-right: 4px; }
-  .intro-name {
-    font-size: 18px; font-weight: 800;
-    letter-spacing: 0.4em;
-    color: #fff;
-    text-shadow: 0 0 20px rgba(124,58,237,0.6);
-    margin-top: 8px;
-    padding-left: 0.4em;
+  .vault-cta-text::after {
+    content: '_';
+    margin-left: 4px;
+    color: var(--neon-green-bright);
+    animation: gateBlink 1s steps(2) infinite;
   }
-  .intro-tag {
-    font-family: 'Inter', sans-serif;
-    font-size: 14px; font-weight: 400;
-    color: var(--text-secondary);
-    max-width: 360px;
-    line-height: 1.5;
-  }
-  .intro-scroll-cue {
-    margin-top: 12px;
-    color: var(--text-tertiary);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.2em;
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
-  }
-  .intro-scroll-cue .scroll-line {
-    /* removed vertical line per user request */
-    display: none;
-  }
-  @keyframes scrollPulseIntro {
-    0%, 100% { opacity: 0.3; transform: scaleY(0.4); transform-origin: top; }
-    50% { opacity: 1; transform: scaleY(1); }
+  @keyframes gateBlink { 50% { opacity: 0; } }
+  body.gate-locked { overflow: hidden; height: 100vh; }
+  @media (prefers-reduced-motion: reduce) {
+    .vault-lock { animation: none; }
+    .vault-cta-text::after { animation: none; }
   }
 
   /* ===== NAV ===== */
@@ -158,7 +136,6 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
   }
   .logo-mark.lg { width: 92px; height: 72px; }
   .logo-mark.sm { width: 38px; height: 30px; }
-  .intro-logo-mark { display: block; margin: 0 auto 14px; }
 
   nav ul { list-style: none; display: flex; gap: 36px; }
   nav ul a {
@@ -616,101 +593,105 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
   }
   .iphone-input-send svg { width: 14px; height: 14px; }
 
-  /* ===== PRICING with BORDER BEAM ===== */
-  .pricing-section { padding: 48px 80px 40px; }
-  .pricing-title {
-    text-align: center;
-    font-size: 28px; font-weight: 700; letter-spacing: 0.02em;
-    text-transform: uppercase; margin-bottom: 40px;
-  }
-  .pricing-title .accent { background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-  .pricing-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    max-width: 1100px; margin: 0 auto;
-  }
-  .pricing-card {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 40px 32px;
+  /* ===== TRIAL HERO (replaces pricing) ===== */
+  :root { --cta-trial-h: 68px; --cta-trial-w: 280px; }
+  .trial-section {
+    padding: 80px 80px 64px;
     text-align: center;
     position: relative;
-    border: 1px solid var(--line);
-    overflow: visible;
-    transition: transform 0.3s;
   }
-  .pricing-card:hover { transform: translateY(-4px); }
-
-  /* BORDER BEAM ANIMATION (running light around edges) */
-  .pricing-card.featured {
-    background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
-                conic-gradient(from var(--beam-angle, 0deg), transparent 0deg, var(--neon-purple) 60deg, var(--neon-pink) 120deg, var(--neon-green-bright) 180deg, transparent 240deg) border-box;
-    border: 2px solid transparent;
-    animation: beamRotate 4s linear infinite;
-    box-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
-  }
-  @property --beam-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
-  @keyframes beamRotate {
-    from { --beam-angle: 0deg; }
-    to { --beam-angle: 360deg; }
-  }
-
-  .pricing-badge {
-    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-    background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
-    color: #fff; padding: 6px 16px;
-    border-radius: 100px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4);
-  }
-  .pricing-name {
-    font-size: 26px; font-weight: 700; letter-spacing: 0.02em;
-    text-transform: uppercase; margin-bottom: 6px;
-  }
-  .pricing-name.access { color: var(--neon-green-bright); }
-  .pricing-name.pro { color: var(--neon-purple-bright); }
-  .pricing-name.elite { color: var(--neon-green-bright); }
-  .pricing-subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
-  .pricing-price {
-    font-size: 40px; font-weight: 700; letter-spacing: -0.02em;
+  .trial-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--neon-green-bright);
     margin-bottom: 28px;
   }
-  .pricing-price .period { font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-left: 4px; }
-  .pricing-features {
-    list-style: none; text-align: left;
-    margin-bottom: 32px;
-    display: flex; flex-direction: column; gap: 12px;
+  .trial-eyebrow .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--neon-green-bright);
+    box-shadow: 0 0 10px var(--neon-green-bright);
+    animation: trialDot 1.6s ease-in-out infinite;
   }
-  .pricing-features li {
-    display: flex; align-items: center; gap: 10px;
-    color: var(--text-secondary); font-size: 14px;
+  @keyframes trialDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
   }
-  .pricing-features li::before {
-    content: '✓';
-    width: 18px; height: 18px;
+  .trial-headline {
+    font-size: 56px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .trial-headline .l1 { display: block; color: #fff; }
+  .trial-headline .l2 { display: block; color: var(--neon-purple-bright); }
+  .trial-headline .l3 { display: block; color: var(--neon-green-bright); }
+  .trial-sub {
+    font-size: 18px; color: var(--text-secondary);
+    max-width: 620px; margin: 0 auto 44px; line-height: 1.55;
+  }
+  a.trial-cta {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: var(--cta-trial-w); height: var(--cta-trial-h);
+    background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+    color: #fff; text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(124, 58, 237, 0.35);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: none;
+    animation: trialPulse 2.4s ease-in-out infinite;
+  }
+  a.trial-cta:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(124, 58, 237, 0.55);
+  }
+  @keyframes trialPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(124, 58, 237, 0.35); }
+    50% { transform: scale(1.015); box-shadow: 0 10px 38px rgba(16, 185, 129, 0.4); }
+  }
+  .trial-microcopy {
+    margin-top: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; letter-spacing: 0.08em;
+    color: var(--text-secondary);
+  }
+  .trial-trust {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 28px;
+    margin-top: 56px;
+    padding-top: 36px;
+    border-top: 1px solid var(--line);
+  }
+  .trial-trust-item {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .trial-trust-item svg {
+    width: 16px; height: 16px;
     color: var(--neon-purple-bright);
-    font-weight: 700;
     flex-shrink: 0;
   }
-  .pricing-cta {
-    display: block; width: 100%;
-    padding: 14px;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-    cursor: none; transition: all 0.3s;
+  /* Defensive: make <a> CTAs render like buttons */
+  a.cta-gradient, a.cta-banner-btn, a.acceso-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    text-decoration: none;
   }
-  .pricing-cta.outline {
-    background: transparent; color: var(--neon-green-bright);
-    border: 1.5px solid var(--neon-green-bright);
+  @media (max-width: 980px) {
+    .trial-section { padding: 60px 32px 48px; }
+    .trial-headline { font-size: 40px; }
+    .trial-sub { font-size: 16px; }
   }
-  .pricing-cta.outline:hover { background: rgba(0, 255, 136, 0.1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
-  .pricing-cta.gradient {
-    background: linear-gradient(135deg, #7c3aed 0%, #7c3aed 100%);
-    color: #fff; border: none;
-    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
+  @media (max-width: 560px) {
+    .trial-section { padding: 48px 20px 36px; }
+    .trial-headline { font-size: 32px; }
+    a.trial-cta { width: 100%; max-width: 320px; }
+    .trial-trust { gap: 16px 20px; }
   }
-  .pricing-cta.gradient:hover { box-shadow: 0 8px 30px rgba(168, 85, 247, 0.55); }
+  @media (prefers-reduced-motion: reduce) {
+    .trial-eyebrow .dot, a.trial-cta { animation: none; }
+    a.trial-cta:hover { transform: none; }
+  }
 
   /* ===== CTA BANNER ===== */
   .cta-banner {
@@ -986,6 +967,115 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
     .contacto-bottom { flex-direction: column; gap: 12px; text-align: center; }
   }
 
+  /* ===== TELEGRAM FAB ===== */
+  .tg-fab {
+    position: fixed;
+    right: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--neon-purple);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9000;
+    cursor: none;
+    text-decoration: none;
+    box-shadow: 0 8px 28px rgba(124, 58, 237, 0.45), 0 0 0 1px rgba(255,255,255,0.06) inset;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  }
+  .tg-fab.is-revealed { opacity: 1; transform: translateY(0); }
+  .tg-fab:hover {
+    background: var(--neon-purple-bright);
+    box-shadow: 0 10px 36px rgba(124, 58, 237, 0.65), 0 0 0 1px rgba(255,255,255,0.1) inset;
+    transform: translateY(-2px) scale(1.06);
+  }
+  .tg-fab:focus-visible { outline: 2px solid var(--neon-green-bright); outline-offset: 4px; }
+  .tg-fab svg { width: 24px; height: 24px; display: block; pointer-events: none; }
+  .tg-fab::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.55);
+    pointer-events: none;
+    animation: tgPulseGlow 2.4s ease-out infinite;
+  }
+  .tg-fab-tooltip {
+    position: absolute; right: calc(100% + 12px); top: 50%;
+    transform: translateY(-50%);
+    background: rgba(17, 17, 17, 0.95);
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    font-size: 12px; font-family: 'JetBrains Mono', monospace;
+    padding: 6px 10px; border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.18s ease;
+  }
+  .tg-fab:hover .tg-fab-tooltip { opacity: 1; }
+  @keyframes tgPulseGlow {
+    0%   { box-shadow: 0 0 0 0   rgba(124, 58, 237, 0.55); }
+    70%  { box-shadow: 0 0 0 18px rgba(124, 58, 237, 0); }
+    100% { box-shadow: 0 0 0 0   rgba(124, 58, 237, 0); }
+  }
+  @media (max-width: 768px) {
+    .tg-fab { width: 52px; height: 52px; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+    .tg-fab-tooltip { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tg-fab { opacity: 1; transform: none; transition: none; }
+    .tg-fab::before { animation: none; }
+    .tg-fab:hover { transform: none; }
+  }
+
+  /* ===== TELEGRAM FOOTER BLOCK ===== */
+  .tg-footer-block {
+    max-width: 1280px;
+    margin: 56px auto 0;
+    padding: 24px 28px;
+    border-radius: 14px;
+    background:
+      linear-gradient(135deg, rgba(124, 58, 237, 0.18) 0%, rgba(16, 185, 129, 0.14) 100%),
+      rgba(17, 17, 17, 0.7);
+    border: 1px solid var(--line-strong);
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 20px;
+    align-items: center;
+  }
+  .tg-footer-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    background: var(--neon-purple);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  }
+  .tg-footer-icon svg { width: 26px; height: 26px; color: #fff; }
+  .tg-footer-copy h4 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: 0.01em; }
+  .tg-footer-copy p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+  .tg-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px;
+    background: var(--neon-purple);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+    text-decoration: none;
+    cursor: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.4);
+  }
+  .tg-cta:hover {
+    transform: translateY(-1px);
+    background: var(--neon-purple-bright);
+    box-shadow: 0 10px 26px rgba(124, 58, 237, 0.55);
+  }
+  @media (max-width: 900px) {
+    .tg-footer-block { grid-template-columns: 1fr; text-align: center; padding: 22px; }
+    .tg-footer-icon { margin: 0 auto; }
+    .tg-cta { justify-self: center; }
+  }
+
   /* ===== ENCRYPTION CANVAS BACKGROUND ===== */
   .crypto-bg {
     position: absolute;
@@ -1001,13 +1091,159 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
   /* Ensure content sits above the canvas */
   .hero > *:not(.crypto-bg) { position: relative; z-index: 2; }
   .cta-final > *:not(.crypto-bg):not(::before) { position: relative; z-index: 2; }
-  .intro-sticky > *:not(.crypto-bg) { z-index: 2; }
+
+  /* ===== B3: Dashboard + Phone interactivos ===== */
+  .toggle-on {
+    cursor: none;
+    user-select: none;
+    transition: background-color 250ms ease, color 250ms ease, box-shadow 250ms ease;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
+    border: none;
+    font-family: inherit;
+  }
+  .toggle-on::after {
+    transition: transform 250ms ease, background-color 250ms ease;
+  }
+  .toggle-on[data-state="off"] {
+    background: var(--neon-red);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
+  }
+  .toggle-on[data-state="off"]::after {
+    transform: translateX(-14px);
+    background: rgba(255, 255, 255, 0.85);
+  }
+  .toggle-on:focus-visible {
+    outline: 2px solid var(--neon-purple-bright);
+    outline-offset: 2px;
+  }
+
+  .iphone-msgs-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .iphone-msgs {
+    max-height: 280px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-green-bright) transparent;
+  }
+  .iphone-msgs::-webkit-scrollbar { width: 4px; }
+  .iphone-msgs::-webkit-scrollbar-track { background: transparent; }
+  .iphone-msgs::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.4); border-radius: 4px; }
+  .iphone-msgs::-webkit-scrollbar-thumb:hover { background: var(--neon-green-bright); }
+
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .msg.msg-new { animation: msgIn 320ms ease-out both; }
+
+  .typing-row {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.18);
+    border-radius: 10px;
+    padding: 10px 12px;
+    animation: msgIn 220ms ease both;
+  }
+  .typing-dot {
+    width: 5px; height: 5px;
+    background: var(--neon-green-bright);
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: typingBlink 1.2s infinite ease-in-out both;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes typingBlink {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+    40%           { opacity: 1;   transform: scale(1); }
+  }
+
+  .iphone-input-real {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--text);
+    padding: 0;
+    min-width: 0;
+    cursor: text;
+  }
+  .iphone-input-real::placeholder { color: var(--text-tertiary); }
+  .iphone-input-send {
+    border: none;
+    cursor: none;
+    transition: opacity 200ms ease, transform 150ms ease;
+  }
+  .iphone-input-send:active { transform: scale(0.92); }
+  .iphone-input-send:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .channel-closed-overlay {
+    position: absolute; inset: 0;
+    display: none;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 10px;
+    background: rgba(10, 10, 10, 0.78);
+    backdrop-filter: blur(2px);
+    border-radius: 8px;
+    z-index: 5;
+    pointer-events: none;
+    animation: msgIn 260ms ease both;
+  }
+  .channel-closed-overlay svg { width: 28px; height: 28px; color: var(--neon-red-bright); }
+  .channel-closed-overlay span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--neon-red-bright);
+    text-transform: uppercase;
+  }
+
+  .iphone-mockup[data-state="off"] .channel-closed-overlay { display: flex; }
+  .iphone-mockup[data-state="off"] .iphone-input { opacity: 0.4; pointer-events: none; }
+  .iphone-mockup[data-state="off"] .iphone-input-real { color: var(--text-tertiary); }
+  .dashboard-card[data-state="off"] .dashboard-mark { filter: saturate(0) brightness(0.6); transition: filter 300ms ease; }
+  .dashboard-card[data-state="off"] .dashboard-input { opacity: 0.5; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .msg.msg-new { animation: none; }
+    .typing-dot { animation: none; opacity: 0.6; }
+    .iphone-msgs { scroll-behavior: auto; }
+    .toggle-on, .toggle-on::after { transition: none; }
+  }
 </style>
 </head>
 <body>
 
 <div class="cursor-outer" id="cursorOuter"></div>
 <div class="cursor-inner" id="cursorInner"></div>
+
+<!-- ============================================
+     VAULT GATE — telón fixed bloqueante hasta interacción
+     ============================================ -->
+<div class="vault-gate" id="vaultGate" role="button" tabindex="0" aria-label="Acceder al sitio">
+  <canvas class="crypto-bg" data-crypto-intensity="0.7"></canvas>
+  <div class="vault-flash" id="vaultFlash"></div>
+  <div class="vault-content">
+    <div class="vault-lock">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path class="vault-shackle" d="M20 30 V22 a12 12 0 0 1 24 0 V30" stroke-linecap="round"/>
+        <rect x="14" y="30" width="36" height="26" rx="3"/>
+        <circle cx="32" cy="42" r="3" fill="currentColor" stroke="none"/>
+        <line x1="32" y1="44" x2="32" y2="50" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="vault-cta-text">Acceder</div>
+  </div>
+</div>
 
 <nav>
   <div class="nav-logo">
@@ -1022,29 +1258,8 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
     <li><a href="#empresas" class="nav-link" data-cursor>Empresas</a></li>
     <li><a href="#contacto" class="nav-link" data-cursor>Contacto</a></li>
   </ul>
-  <button class="acceso-btn" data-cursor>Acceso</button>
+  <a class="acceso-btn" href="https://app.phantom.com/register" target="_blank" rel="noopener noreferrer" data-cursor data-webapp-cta>Acceso</a>
 </nav>
-
-<!-- ============================================
-     INTRO SPLASH — Espacio reservado para video frame-a-frame del logo (AI generado)
-     ============================================ -->
-<div class="hero-wrapper" id="introWrapper">
-  <div class="intro-sticky">
-    <canvas class="crypto-bg" data-crypto-intensity="0.85"></canvas>
-    <div class="intro-ambient"></div>
-    <div class="intro-labels" id="introLabels">
-      <div class="crypto-pill">
-        <span class="cp-key">SHA-256</span>
-        <span class="cp-hash" id="liveHash">a4f9 · 3b21 · 7c8e · d046</span>
-        <span class="cp-status">VERIFIED</span>
-      </div>
-      <span class="logo-mark lg intro-logo-mark" aria-label="Phantom"></span>
-      <div class="intro-name">PHANTOM</div>
-      <div class="intro-scroll-cue">Scroll para acceder<span class="scroll-line"></span></div>
-    </div>
-  </div>
-</div>
-
 
 <!-- HERO -->
 <section class="hero" id="inicio">
@@ -1057,7 +1272,7 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
     </h1>
     <p class="hero-subtitle">Phantom es un canal cifrado de extremo a extremo donde tus conversaciones solo existen el tiempo necesario.</p>
     <div class="hero-ctas">
-      <a href="#planes"><button class="cta-gradient" data-cursor>Comenzar ahora</button></a>
+      <a href="https://app.phantom.com/register" target="_blank" rel="noopener noreferrer" class="cta-gradient" data-cursor data-webapp-cta>Comenzar ahora</a>
       <a href="#funciones"><button class="cta-outline" data-cursor>Más información</button></a>
     </div>
     <div class="trust-line">
@@ -1105,13 +1320,13 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
 <section class="section" style="padding-top: 0;">
   <div class="demo-grid">
     <!-- Dashboard mockup card -->
-    <div class="dashboard-card">
+    <div class="dashboard-card" id="phantomDashboardCard" data-state="on">
       <div class="dashboard-header">
         <div class="dashboard-logo">
           <span class="logo-mark sm" aria-label="Phantom"></span>
           PHANTOM
         </div>
-        <span class="toggle-on">ON</span>
+        <button class="toggle-on" id="phantomToggle" type="button" data-state="on" aria-pressed="true" aria-label="Activar o desactivar canal seguro">ON</button>
       </div>
       <div class="dashboard-meta">
         <span>ID: <strong>demetrio</strong></span>
@@ -1144,72 +1359,52 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
     </div>
 
     <!-- iPhone mockup -->
-    <div class="iphone-mockup">
+    <div class="iphone-mockup" id="phantomPhone" data-state="on">
       <div class="iphone-notch"></div>
       <div class="iphone-header">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         <span class="iphone-title">SEÑOR X</span>
       </div>
-      <div class="iphone-msgs">
-        <div class="msg">
-          <div class="msg-icon">🔒</div>
-          <div class="msg-content">Y2V3s0Y+pCt bpvH+ z7KSnJ3B0wucq0+...<div class="msg-time">19:27</div></div>
+      <div class="iphone-msgs-wrap">
+        <div class="iphone-msgs" id="phantomChatMsgs" role="log" aria-live="polite" aria-label="Mensajes cifrados">
+          <div class="msg">
+            <div class="msg-icon">🔒</div>
+            <div class="msg-content">Y2V3s0Y+pCt bpvH+ z7KSnJ3B0wucq0+...<div class="msg-time">19:27</div></div>
+          </div>
+          <div class="msg">
+            <div class="msg-icon">🔒</div>
+            <div class="msg-content">3Kx/ZUcAloAv2AT50nR iJlkhfPe7fUXgRBr72...<div class="msg-time">19:32</div></div>
+          </div>
         </div>
-        <div class="msg">
-          <div class="msg-icon">🔒</div>
-          <div class="msg-content">3Kx/ZUcAloAv2AT50nR iJlkhfPe7fUXgRBr72...<div class="msg-time">19:32</div></div>
+        <div class="channel-closed-overlay" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Canal cerrado</span>
         </div>
       </div>
-      <div class="iphone-input">
-        Responder...
-        <div class="iphone-input-send"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></div>
-      </div>
+      <form class="iphone-input" id="phantomChatForm" autocomplete="off">
+        <input class="iphone-input-real" id="phantomChatInput" type="text" placeholder="Responder..." maxlength="120" data-cursor aria-label="Mensaje cifrado">
+        <button class="iphone-input-send" id="phantomChatSend" type="submit" data-cursor aria-label="Enviar mensaje"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+      </form>
     </div>
   </div>
 </section>
 
-<!-- PRICING with BORDER BEAM -->
-<section class="pricing-section" id="planes">
-  <h2 class="pricing-title"><span class="accent">Planes</span> para cada nivel de privacidad</h2>
-  <div class="pricing-grid">
-    <div class="pricing-card">
-      <h3 class="pricing-name access">ACCESS</h3>
-      <p class="pricing-subtitle">Para uso personal</p>
-      <div class="pricing-price">US$12<span class="period">/ mes</span></div>
-      <ul class="pricing-features">
-        <li>Chats cifrados</li>
-        <li>Sesiones efímeras</li>
-        <li>1 dispositivo</li>
-      </ul>
-      <button class="pricing-cta outline" data-cursor>Elegir plan</button>
-    </div>
-
-    <div class="pricing-card featured">
-      <span class="pricing-badge">Más elegido</span>
-      <h3 class="pricing-name pro">PRO</h3>
-      <p class="pricing-subtitle">Para profesionales</p>
-      <div class="pricing-price">US$29<span class="period">/ mes</span></div>
-      <ul class="pricing-features">
-        <li>Grupos cifrados</li>
-        <li>Múltiples sesiones</li>
-        <li>3 dispositivos</li>
-        <li>Soporte prioritario</li>
-      </ul>
-      <button class="pricing-cta gradient" data-cursor>Elegir plan</button>
-    </div>
-
-    <div class="pricing-card">
-      <h3 class="pricing-name elite">ELITE</h3>
-      <p class="pricing-subtitle">Para equipos y empresas</p>
-      <div class="pricing-price">US$49<span class="period">/ mes</span></div>
-      <ul class="pricing-features">
-        <li>Todo incluido en PRO</li>
-        <li>Sesiones ilimitadas</li>
-        <li>Dispositivos ilimitados</li>
-        <li>Soporte 24/7</li>
-      </ul>
-      <button class="pricing-cta outline" data-cursor>Elegir plan</button>
-    </div>
+<!-- TRIAL HERO (replaces pricing) -->
+<section class="trial-section" id="planes" aria-labelledby="trial-heading">
+  <div class="trial-eyebrow"><span class="dot" aria-hidden="true"></span>7 DÍAS GRATIS</div>
+  <h2 id="trial-heading" class="trial-headline">
+    <span class="l1">Probá Phantom.</span>
+    <span class="l2">Sin tarjeta.</span>
+    <span class="l3">Sin riesgo.</span>
+  </h2>
+  <p class="trial-sub">Cifrado de extremo a extremo, sesiones efímeras y cero registros. Empezá ahora y decidí después.</p>
+  <a class="trial-cta" href="https://app.phantom.com/register" target="_blank" rel="noopener noreferrer" data-cursor data-webapp-cta aria-label="Comenzar prueba gratuita de 7 días">Comenzar gratis</a>
+  <div class="trial-microcopy">Sin tarjeta · 7 días · Cancelá cuando quieras</div>
+  <div class="trial-trust">
+    <span class="trial-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Cifrado E2E</span>
+    <span class="trial-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M14.12 14.12A3 3 0 119.88 9.88"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Sin logs</span>
+    <span class="trial-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Open source</span>
+    <span class="trial-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.739-8z"/></svg>Sin límite de uso</span>
   </div>
 </section>
 
@@ -1222,7 +1417,7 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
     <strong>Phantom no es solo una app.</strong>
     <span>Es tu espacio seguro en un mundo que no lo es.</span>
   </div>
-  <button class="cta-banner-btn" data-cursor>Únete a Phantom</button>
+  <a class="cta-banner-btn" href="https://app.phantom.com/register" target="_blank" rel="noopener noreferrer" data-cursor data-webapp-cta>Únete a Phantom</a>
 </div>
 
 <!-- ======= PÁGINA FUNCIONES (Hero alternativo) ======= -->
@@ -1330,7 +1525,7 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
     <h2 class="cta-final-title">Tu privacidad no es una opción.<br><span class="accent-pink">Es la regla.</span></h2>
     <p class="cta-final-desc">Phantom es comunicación sin fronteras, sin rastros y sin compromisos.</p>
   </div>
-  <button class="cta-gradient cta-final-btn" data-cursor>Únete a Phantom</button>
+  <a class="cta-gradient cta-final-btn" href="https://app.phantom.com/register" target="_blank" rel="noopener noreferrer" data-cursor data-webapp-cta>Únete a Phantom</a>
   <div class="cta-final-trust">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     Sin registro. Sin datos. Sin historial.
@@ -1366,44 +1561,103 @@ html { scroll-padding-top: 90px; } /* offset for fixed nav */
       <a href="#">Transparencia</a>
     </div>
   </div>
+
+  <div class="tg-footer-block">
+    <div class="tg-footer-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+    </div>
+    <div class="tg-footer-copy">
+      <h4>Hablanos por Telegram</h4>
+      <p>Respondemos rápido. Sin formularios, sin filas. Solo conversación cifrada.</p>
+    </div>
+    <a class="tg-cta" href="https://t.me/PHANTOM_OFICIAL" target="_blank" rel="noopener noreferrer" data-cursor aria-label="Abrir Telegram">
+      Abrir Telegram <span aria-hidden="true">→</span>
+    </a>
+  </div>
+
   <div class="contacto-bottom">
     <span class="contacto-copy">© 2026 Phantom · Todos los derechos reservados</span>
     <span class="contacto-status"><span class="contacto-dot"></span>Sistema operando con cifrado activo</span>
   </div>
 </section>
 
+<a class="tg-fab" id="tgFab" href="https://t.me/PHANTOM_OFICIAL" target="_blank" rel="noopener noreferrer" data-cursor aria-label="Hablanos por Telegram">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+  <span class="tg-fab-tooltip">Telegram</span>
+</a>
+
 <script>
-// ===== INTRO SPLASH SCROLL-DRIVEN FADE (sin video — placeholder reservado) =====
-const introLabels = document.getElementById('introLabels');
-const introWrapper = document.getElementById('introWrapper');
+// ===== VAULT GATE =====
+(function vaultGateInit() {
+  const gate = document.getElementById('vaultGate');
+  if (!gate) return;
 
-if (introWrapper) {
-  window.addEventListener('scroll', () => {
-    const rect = introWrapper.getBoundingClientRect();
-    const total = introWrapper.offsetHeight - window.innerHeight;
-    const scrolled = -rect.top;
-    const progress = Math.max(0, Math.min(1, scrolled / total));
-    if (introLabels) {
-      const fadeP = Math.min(1, progress / 0.4);
-      introLabels.style.opacity = 1 - fadeP;
-      introLabels.style.transform = `translateX(-50%) translateY(${-20 * fadeP}px)`;
-    }
-  }, { passive: true });
-}
+  const SEEN_KEY = 'phantom_gate_seen';
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// ===== Hash rotation =====
-const HEX = '0123456789abcdef';
-function randHash() {
-  const g = [];
-  for (let i = 0; i < 4; i++) {
-    let s = '';
-    for (let j = 0; j < 4; j++) s += HEX[Math.floor(Math.random() * 16)];
-    g.push(s);
+  if (sessionStorage.getItem(SEEN_KEY) === '1') {
+    gate.style.display = 'none';
+    document.dispatchEvent(new CustomEvent('phantom:gate-opened', { detail: { skipped: true } }));
+    return;
   }
-  return g.join(' · ');
-}
-const liveHash = document.getElementById('liveHash');
-if (liveHash) setInterval(() => liveHash.textContent = randHash(), 2400);
+
+  document.body.classList.add('gate-locked');
+  sessionStorage.setItem(SEEN_KEY, '1');
+
+  let opened = false;
+  let autoSkipTimer = null;
+
+  function openGate(e) {
+    if (opened) return;
+    if (e && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+    if (e && e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    opened = true;
+    cleanup();
+
+    if (reducedMotion || typeof gsap === 'undefined') {
+      gate.style.transition = 'opacity 200ms ease';
+      gate.style.opacity = '0';
+      setTimeout(finish, 220);
+      return;
+    }
+
+    const flash = document.getElementById('vaultFlash');
+    const shackle = gate.querySelector('.vault-shackle');
+    const lock = gate.querySelector('.vault-lock');
+
+    const tl = gsap.timeline({ onComplete: finish });
+    tl.to(shackle, { rotation: -22, y: -6, duration: 0.28, ease: 'power2.out' }, 0)
+      .to(lock,    { scale: 1.25, duration: 0.32, ease: 'power2.out' }, 0)
+      .to(flash,   { opacity: 1, duration: 0.18, ease: 'power2.out' }, 0.18)
+      .to(flash,   { opacity: 0, duration: 0.32, ease: 'power2.in'  }, 0.36)
+      .to(gate,    { clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 100%)', duration: 0.45, ease: 'power3.inOut' }, 0.32)
+      .to(gate,    { opacity: 0, duration: 0.18, ease: 'power2.in' }, 0.7);
+  }
+
+  function finish() {
+    gate.style.display = 'none';
+    document.body.classList.remove('gate-locked');
+    document.dispatchEvent(new CustomEvent('phantom:gate-opened', { detail: { skipped: false } }));
+  }
+
+  function cleanup() {
+    gate.removeEventListener('click', openGate);
+    window.removeEventListener('wheel', openGate);
+    window.removeEventListener('touchstart', openGate);
+    window.removeEventListener('touchmove', openGate);
+    window.removeEventListener('keydown', openGate);
+    if (autoSkipTimer) { clearTimeout(autoSkipTimer); autoSkipTimer = null; }
+  }
+
+  gate.addEventListener('click', openGate);
+  window.addEventListener('wheel', openGate, { passive: true });
+  window.addEventListener('touchstart', openGate, { passive: true });
+  window.addEventListener('touchmove', openGate, { passive: true });
+  window.addEventListener('keydown', openGate);
+
+  autoSkipTimer = setTimeout(() => openGate(), 6000);
+  requestAnimationFrame(() => gate.focus());
+})();
 
 // ===== ACTIVE NAV LINK ON SCROLL =====
 const navLinks = document.querySelectorAll('.nav-link');
@@ -1440,15 +1694,19 @@ navLinks.forEach(link => {
 });
 
 // ===== BUTTON ACTIONS =====
+const WEBAPP_URL = 'https://app.phantom.com/register';
 function scrollToSection(id) {
   const el = document.querySelector(id);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-document.querySelectorAll('.acceso-btn').forEach(btn => {
-  btn.addEventListener('click', () => scrollToSection('#planes'));
-});
-document.querySelectorAll('.cta-final-btn, .cta-banner-btn').forEach(btn => {
-  btn.addEventListener('click', () => scrollToSection('#planes'));
+// Defensive fallback for [data-webapp-cta] elements without href: open WEBAPP_URL.
+// Anchored <a> elements navigate natively without JS.
+document.querySelectorAll('[data-webapp-cta]').forEach(el => {
+  if (el.tagName === 'A' && el.getAttribute('href')) return;
+  el.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.open(WEBAPP_URL, '_blank', 'noopener,noreferrer');
+  });
 });
 
 // ===== CUSTOM CURSOR =====
@@ -1603,6 +1861,166 @@ class CryptoBg {
 }
 
 document.querySelectorAll('canvas.crypto-bg').forEach(c => new CryptoBg(c));
+
+// ===== B7: Telegram FAB wiring + reveal coordinated with vault gate =====
+(function () {
+  const TELEGRAM_USERNAME = 'PHANTOM_OFICIAL';
+  const TELEGRAM_URL = 'https://t.me/' + TELEGRAM_USERNAME;
+  document.querySelectorAll('a.tg-fab, a.tg-cta').forEach(a => { a.href = TELEGRAM_URL; });
+
+  const fab = document.querySelector('.tg-fab');
+  if (!fab) return;
+
+  const reveal = () => {
+    if (fab.dataset.revealed === '1') return;
+    fab.dataset.revealed = '1';
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || typeof gsap === 'undefined') {
+      fab.classList.add('is-revealed');
+      return;
+    }
+    fab.classList.add('is-revealed');
+    gsap.from(fab, { opacity: 0, y: 12, duration: 0.5, ease: 'power2.out' });
+  };
+
+  document.addEventListener('phantom:gate-opened', reveal, { once: true });
+  // Fallback: si por alguna razón no se dispara el evento, mostrar a 3.5s
+  setTimeout(reveal, 3500);
+})();
+
+// ===== B3: Dashboard toggle + Phone chat interactivos =====
+(function() {
+  const card = document.getElementById('phantomDashboardCard');
+  const toggle = document.getElementById('phantomToggle');
+  const phone = document.getElementById('phantomPhone');
+  const msgsEl = document.getElementById('phantomChatMsgs');
+  const form = document.getElementById('phantomChatForm');
+  const input = document.getElementById('phantomChatInput');
+  const sendBtn = document.getElementById('phantomChatSend');
+  if (!toggle || !msgsEl || !input) return;
+
+  const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  const BOT_POOL = [
+    'kP4xZmA2vR8nQ wL5tY9bC3dF7gH JjKkMmNnOoP...',
+    'X7yU2iO9aS4dF gG6hH3jJ8kK0lL ZzXxCcVvBb...',
+    '9pQ3rS6tU1vW xX5cV8bN2mM4kK aA0sS7dD3fF...',
+    'eR4tY7uI1oP3 mN6bV9cX2zZ5lL hH8jJ0kK4...',
+    'A1s2D3f4G5h JkL0mN9bV8cX zE7rT4yU1iO...',
+    '2wE5rT8yU3i Q6aZ9xS2cD5vF gH4jK7lM0nB...',
+    'pY6mE3vK9wL Q2nR8tF5jA1bC sX4zG7hJ0u...',
+    'B5n7M2k4Q9w X3vC6bN1mP8r D2fH5jK0lW...',
+    'TgR9hJ4kL2 mN6bV8cX1zA wQ5eR3tY0uI7...',
+    'hG7jK4lM2n B5vC8xZ1aS9 dF3gH6jK0lP4...'
+  ];
+
+  let pendingBotTimer = null;
+  let typingTimer = null;
+  let typingEl = null;
+  let isTransitioning = false;
+  let lastMinute = 32;
+
+  function gateLocked() {
+    return document.body.classList.contains('gate-locked');
+  }
+  function fakeEncrypt(plain) {
+    const total = Math.min(60, Math.max(24, (plain || '').length * 3 + 8));
+    let s = '';
+    for (let i = 0; i < total; i++) s += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+    const chunks = [];
+    let rem = s;
+    while (rem.length > 0) {
+      const len = 5 + Math.floor(Math.random() * 13);
+      chunks.push(rem.slice(0, len));
+      rem = rem.slice(len);
+    }
+    return chunks.join(' ') + '...';
+  }
+  function nextTimestamp() {
+    lastMinute += 1 + Math.floor(Math.random() * 3);
+    const h = 19 + Math.floor(lastMinute / 60);
+    const m = lastMinute % 60;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+  }
+  function scrollToBottom() { msgsEl.scrollTop = msgsEl.scrollHeight; }
+  function appendMsg(cipherText) {
+    const wrap = document.createElement('div');
+    wrap.className = 'msg msg-new';
+    wrap.innerHTML = '<div class="msg-icon">\u{1F512}</div><div class="msg-content"></div>';
+    const content = wrap.querySelector('.msg-content');
+    content.appendChild(document.createTextNode(cipherText));
+    const time = document.createElement('div');
+    time.className = 'msg-time';
+    time.textContent = nextTimestamp();
+    content.appendChild(time);
+    msgsEl.appendChild(wrap);
+    requestAnimationFrame(scrollToBottom);
+  }
+  function showTyping() {
+    if (typingEl) return;
+    typingEl = document.createElement('div');
+    typingEl.className = 'typing-row';
+    typingEl.setAttribute('aria-hidden', 'true');
+    typingEl.innerHTML = '<div class="msg-icon">\u{1F512}</div><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+    msgsEl.appendChild(typingEl);
+    scrollToBottom();
+  }
+  function hideTyping() {
+    if (typingEl && typingEl.parentNode) typingEl.parentNode.removeChild(typingEl);
+    typingEl = null;
+  }
+  function cancelPending() {
+    if (pendingBotTimer) { clearTimeout(pendingBotTimer); pendingBotTimer = null; }
+    if (typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
+    hideTyping();
+  }
+  function isOn() { return toggle.dataset.state === 'on'; }
+  function botReply() {
+    const r = Math.random();
+    if (r < 0.2) return;
+    const typingDelay = r < 0.3 ? 2400 + Math.random() * 2000 : 800 + Math.random() * 700;
+    typingTimer = setTimeout(() => {
+      typingTimer = null;
+      if (!isOn()) return;
+      showTyping();
+      const replyMs = 1200 + Math.random() * 600;
+      pendingBotTimer = setTimeout(() => {
+        pendingBotTimer = null;
+        if (!isOn()) return;
+        hideTyping();
+        const text = BOT_POOL[Math.floor(Math.random() * BOT_POOL.length)];
+        appendMsg(text);
+      }, replyMs);
+    }, typingDelay);
+  }
+  function setToggleState(on) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    setTimeout(() => { isTransitioning = false; }, 260);
+    const state = on ? 'on' : 'off';
+    toggle.dataset.state = state;
+    toggle.textContent = on ? 'ON' : 'OFF';
+    toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (card) card.dataset.state = state;
+    if (phone) phone.dataset.state = state;
+    input.disabled = !on;
+    sendBtn.disabled = !on;
+    if (!on) cancelPending();
+  }
+  toggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (gateLocked()) return;
+    setToggleState(!isOn());
+  });
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (gateLocked() || !isOn()) return;
+    const value = input.value.trim();
+    if (!value) return;
+    appendMsg(fakeEncrypt(value));
+    input.value = '';
+    botReply();
+  });
+})();
 </script>
 </body>
 </html>
